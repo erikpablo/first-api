@@ -1,4 +1,16 @@
 import fastify from 'fastify'
+import {
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+} from 'fastify-type-provider-zod'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUi from '@fastify/swagger-ui'
+import { createCourseRoute } from './http/controllers/courses/create.ts'
+import { getCoursesRoute } from './http/controllers/courses/get-courses.ts'
+import { getCourseByIdRoute } from './http/controllers/courses/get-course-by-id.ts'
+import scalarAPIReference from '@scalar/fastify-api-reference'
 
 export const app = fastify({
   logger: {
@@ -10,10 +22,25 @@ export const app = fastify({
       },
     },
   },
+}).withTypeProvider<ZodTypeProvider>()
+
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: 'Courses API',
+      version: '1.0.0',
+    },
+  },
+  transform: jsonSchemaTransform,
 })
 
-app.get('/hello', async (request, reply) => {
-  return { message: 'Hello, World!' }
+app.register(scalarAPIReference, {
+  routePrefix: '/docs',
 })
 
-//33 minutos
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
+
+app.register(createCourseRoute)
+app.register(getCoursesRoute)
+app.register(getCourseByIdRoute)
