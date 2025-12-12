@@ -15,6 +15,20 @@
       "when": 1765224003655,
       "tag": "0001_damp_warhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1765505508361,
+      "tag": "0002_omniscient_tarot",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1765505733011,
+      "tag": "0003_brown_vulture",
+      "breakpoints": true
     }
   ]
 }
