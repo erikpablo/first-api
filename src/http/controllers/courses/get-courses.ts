@@ -1,7 +1,8 @@
 import z from 'zod'
 import { db } from '../../../database/client.ts'
-import { courses } from '../../../database/schema.ts'
+import { courses, enrollments } from '../../../database/schema.ts'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
+import { and, asc, count, eq, ilike, type SQL } from 'drizzle-orm'
 
 export const getCoursesRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
@@ -10,6 +11,11 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ['Courses'],
         summary: 'Get all courses',
+        querystring: z.object({
+          search: z.string().optional(),
+          orderBy: z.enum(['id', 'title']).optional().default('id'),
+          page: z.coerce.number().optional().default(1),
+        }),
         response: {
           200: z.object({
             courses: z.array(
@@ -18,19 +24,38 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (app) => {
                 title: z.string(),
               })
             ),
+            total: z.number(),
           }),
         },
       },
     },
     async (request, reply) => {
-      const result = await db
-        .select({
-          id: courses.id,
-          title: courses.title,
-        })
-        .from(courses)
+      const { search, orderBy, page } = request.query
 
-      return reply.send({ courses: result })
+      const conditions: SQL[] = []
+
+      if (search) {
+        conditions.push(ilike(courses.title, `%${search}%`))
+      }
+
+      const [result, total] = await Promise.all([
+        db
+          .select({
+            id: courses.id,
+            title: courses.title,
+            enrollments: count(enrollments.id),
+          })
+          .from(courses)
+          .innerJoin(enrollments, eq(enrollments.id, courses.id))
+          .offset((page - 1) * 20)
+          .limit(20)
+          .orderBy(asc(courses[orderBy]))
+          .where(and(...conditions)),
+
+        db.$count(courses, and(...conditions)),
+      ])
+
+      return reply.send({ courses: result, total })
     }
   )
 }
