@@ -8,7 +8,8 @@
     "start:dev": "node --env-file .env --watch src/server.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
@@ -28,7 +29,10 @@
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
     "@types/node": "^24.10.1",
+    "@types/supertest": "^6.0.3",
     "drizzle-kit": "^0.31.8",
-    "typescript": "^5.9.3"
+    "supertest": "^7.1.4",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
   }
 }
