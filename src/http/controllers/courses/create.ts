@@ -12,12 +12,12 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (app) => {
         summary: 'Create a new course',
         body: z.object({
           title: z.string().min(5, 'Title must be at least 5 characters long'),
-          description: z.string().nullable(),
+          description: z.string().nullable().optional(),
         }),
         response: {
           201: z
             .object({
-              couseId: z.uuid(),
+              courseId: z.uuid(),
             })
             .describe('Response when the course is created successfully'),
         },
@@ -34,7 +34,7 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (app) => {
         })
         .returning()
 
-      return reply.status(201).send({ couseId: result[0].id })
+      return reply.status(201).send({ courseId: result[0].id })
     }
   )
 }
