@@ -1,0 +1,1 @@
+CREATE DATABASE first_db_test;
