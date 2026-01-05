@@ -36,6 +36,20 @@
       "when": 1765831272424,
       "tag": "0004_public_grim_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1766464106649,
+      "tag": "0005_married_wraith",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1766464377997,
+      "tag": "0006_slimy_lady_mastermind",
+      "breakpoints": true
     }
   ]
 }
