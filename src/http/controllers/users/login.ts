@@ -4,6 +4,8 @@ import { users } from '../../../database/schema.ts'
 import z from 'zod'
 import { eq } from 'drizzle-orm'
 import { verify } from 'argon2'
+import jwt from 'jsonwebtoken'
+import { env } from '../../../env/index.ts'
 
 export const loginRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -18,7 +20,7 @@ export const loginRoute: FastifyPluginAsyncZod = async (app) => {
         }),
         response: {
           200: z.object({
-            message: z.string().describe('Success message'),
+            token: z.string(),
           }),
           401: z.object({
             message: z
@@ -45,7 +47,9 @@ export const loginRoute: FastifyPluginAsyncZod = async (app) => {
         return reply.status(401).send({ message: 'Invalid email or password' })
       }
 
-      return reply.status(200).send({ message: 'Login successful' })
-    }
+      const token = jwt.sign({ sub: user.id, role: user.role }, env.JWT_SECRET)
+
+      return reply.status(200).send({ token })
+    },
   )
 }
