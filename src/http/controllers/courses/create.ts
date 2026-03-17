@@ -9,7 +9,7 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/courses',
     {
-      preHandler: [checkRequestJWT, checkUserRole],
+      preHandler: [checkRequestJWT, checkUserRole('manager')],
       schema: {
         tags: ['Courses'],
         summary: 'Create a new course',

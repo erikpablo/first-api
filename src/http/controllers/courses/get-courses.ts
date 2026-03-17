@@ -3,11 +3,14 @@ import { db } from '../../../database/client.ts'
 import { courses, enrollments } from '../../../database/schema.ts'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { and, asc, count, eq, ilike, type SQL } from 'drizzle-orm'
+import { checkRequestJWT } from './hooks/check-request-jwt.ts'
+import { checkUserRole } from './hooks/check-user-role.ts'
 
 export const getCoursesRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
     '/courses',
     {
+      preHandler: [checkRequestJWT, checkUserRole('manager')],
       schema: {
         tags: ['Courses'],
         summary: 'Get all courses',
@@ -23,7 +26,7 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (app) => {
                 id: z.uuid(),
                 title: z.string(),
                 enrollments: z.number(),
-              })
+              }),
             ),
             total: z.number(),
           }),
@@ -58,6 +61,6 @@ export const getCoursesRoute: FastifyPluginAsyncZod = async (app) => {
       ])
 
       return reply.send({ courses: result, total })
-    }
+    },
   )
 }
