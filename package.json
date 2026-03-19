@@ -7,7 +7,7 @@
     "db:seed": "node --env-file .env src/database/seed.ts",
     "start:dev": "node --env-file .env --watch src/server.ts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:migrate": "npx drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "pretest": "dotenv -e .env.test drizzle-kit migrate",
     "test": "dotenv -e .env.test vitest run"
